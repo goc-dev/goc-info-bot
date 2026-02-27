@@ -5,6 +5,7 @@ A simple Telegram bot built with Python.
 ## Features
 - /start command to welcome users
 - /help command for assistance
+- /events command for event information
 - Echo functionality for text messages
 
 ## Requirements
@@ -49,3 +50,4 @@ This bot is ready for deployment to platforms like BotHost.ru with the included:
 After starting the bot, you can use the following commands:
 - `/start` - Welcome message
 - `/help` - Help information
+- `/events` - Event information
