@@ -21,6 +21,10 @@ def help_command(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /help is issued."""
     update.message.reply_text('Help! This is a simple bot with basic commands.')
 
+def events_command(update: Update, context: CallbackContext) -> None:
+    """Send a message when the command /events is issued."""
+    update.message.reply_text('Events: not scheduled yet.')
+
 def echo(update: Update, context: CallbackContext) -> None:
     """Echo the user message."""
     update.message.reply_text(update.message.text)
@@ -36,6 +40,7 @@ def main() -> None:
     # Register command handlers
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("help", help_command))
+    dispatcher.add_handler(CommandHandler("events", events_command))
 
     # Register message handler
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
