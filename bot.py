@@ -1,55 +1,71 @@
+import os
+import asyncio
 import logging
-from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
-import config
+from aiogram import Bot, Dispatcher, types
+from aiogram.filters import Command
+from aiogram.types import Message
 
-# Enable logging
+# Configure logging
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 
-logger = logging.getLogger(__name__)
+# Get bot token from environment variable (set in BotHost.ru admin panel)
+API_TOKEN = os.getenv('API_TOKEN')
 
-# Define command handlers
-def start(update: Update, context: CallbackContext) -> None:
-    """Send a message when the command /start is issued."""
-    user = update.effective_user
-    update.message.reply_text(f'Hi {user.first_name}! Welcome to {config.BOT_NAME}.')
+if not API_TOKEN:
+    error_msg = "No API_TOKEN found in environment variables"
+    logging.error(error_msg)
+    raise ValueError(error_msg)
 
-def help_command(update: Update, context: CallbackContext) -> None:
-    """Send a message when the command /help is issued."""
-    update.message.reply_text('Help! This is a simple bot with basic commands.')
+# Initialize bot and dispatcher
+bot = Bot(token=API_TOKEN)
+dp = Dispatcher()
 
-def events_command(update: Update, context: CallbackContext) -> None:
-    """Send a message when the command /events is issued."""
-    update.message.reply_text('Events: not scheduled yet.')
+@dp.message(Command("start"))
+async def cmd_start(message: Message) -> None:
+    """Handle /start command"""
+    await message.answer(
+        "👋 Hello! I'm your bot running on BotHost.ru\n\n"
+        "Available commands:\n"
+        "/start - Start the bot\n"
+        "/help - Show this help"
+    )
 
-def echo(update: Update, context: CallbackContext) -> None:
-    """Echo the user message."""
-    update.message.reply_text(update.message.text)
+@dp.message(Command("help"))
+async def cmd_help(message: Message) -> None:
+    """Handle /help command"""
+    await message.answer(
+        "📋 Available commands:\n"
+        "/start - Start the bot\n"
+        "/help - Show this help\n\n"
+        "Just send any message and I'll echo it back!"
+    )
 
-def main() -> None:
-    """Start the bot."""
-    # Create the Updater and pass it your bot's token.
-    updater = Updater(config.BOT_TOKEN)
+@dp.message()
+async def echo_message(message: Message) -> None:
+    """Echo any other message"""
+    await message.answer(f"📨 You said: {message.text}")
 
-    # Get the dispatcher to register handlers
-    dispatcher = updater.dispatcher
+async def on_startup() -> None:
+    """Actions to perform on startup"""
+    me = await bot.me()
+    logging.info(f"Bot @{me.username} (ID: {me.id}) started successfully!")
+    logging.info(f"BotHost.ru deployment ready")
 
-    # Register command handlers
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("help", help_command))
-    dispatcher.add_handler(CommandHandler("events", events_command))
+async def on_shutdown() -> None:
+    """Actions to perform on shutdown"""
+    logging.info("Bot shutting down...")
 
-    # Register message handler
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
-
-    # Start the Bot
-    updater.start_polling()
-
-    # Run the bot until you press Ctrl-C
-    updater.idle()
+async def main() -> None:
+    """Main function"""
+    # Register startup and shutdown hooks
+    dp.startup.register(on_startup)
+    dp.shutdown.register(on_shutdown)
+    
+    # Start polling
+    await dp.start_polling(bot)
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())
