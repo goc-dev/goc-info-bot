@@ -22,6 +22,7 @@ async def cmd_help(message: Message) -> None:
         "/start - Start the bot\n"
         "/help - Show this help\n\n"
         "Just send any message and I'll echo it back!"
+        "\n\nVersion: 0.1.2"
     )
 
 @router.message(Command("ping"))
