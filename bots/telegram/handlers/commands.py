@@ -2,6 +2,7 @@ from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
 import config
+import config
 
 router = Router()
 
@@ -16,17 +17,22 @@ async def cmd_start(message: Message) -> None:
 @router.message(Command("help"))
 async def cmd_help(message: Message) -> None:
     """Handle /help command"""
+
+    if message.from_user.id in config.ADMIN_IDS:
+        admin_help = "\n/admin - Show admin IDs (admin only)"
+    else:
+        admin_help = ""
+
     base_commands = (
         "📋 Available commands:"
         "\n/start - Start the bot"
         "\n/help - Show this help"
         "\n/ping - Simple health check"
     )
-    if message.from_user.id in config.ADMIN_IDS:
-        base_commands += "\n/admin - Show admin IDs (admin only)"
+    base_commands += admin_help
     base_commands += (
         "\n\nJust send any message and I'll echo it back!"
-        "\n\nVersion: 0.1.5-2026-0314-2318"
+        "\n\nVersion: 0.1.5-2026-0314-2330"
     )
     await message.answer(base_commands)
 
