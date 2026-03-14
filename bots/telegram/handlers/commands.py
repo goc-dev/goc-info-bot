@@ -9,10 +9,7 @@ async def cmd_start(message: Message) -> None:
     """Handle /start command"""
     await message.answer(
         "👋 Bot is running on BotHost.ru"
-        "\n\nAvailable commands:"
-        "\n/start - Start the bot"
-        "\n/help - Show this help"
-        "\n/ping - Simple health check"
+        "\n\n/help - Show available commands"
     )
 
 @router.message(Command("help"))
@@ -22,6 +19,7 @@ async def cmd_help(message: Message) -> None:
         "📋 Available commands:"
         "\n/start - Start the bot"
         "\n/help - Show this help"
+        "\n/ping - Simple health check"
         "\n\nJust send any message and I'll echo it back!"
         "\n\nVersion: 0.1.3-2026-0314-0824"
     )
