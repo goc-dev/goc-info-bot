@@ -26,7 +26,7 @@ async def cmd_help(message: Message) -> None:
         base_commands += "\n/admin - Show admin IDs (admin only)"
     base_commands += (
         "\n\nJust send any message and I'll echo it back!"
-        "\n\nVersion: 0.1.4-2026-0314-0917"
+        "\n\nVersion: 0.1.5-2026-0314-2318"
     )
     await message.answer(base_commands)
 
@@ -45,5 +45,15 @@ async def cmd_admin(message: Message) -> None:
     if not admin_ids:
         await message.answer("No admin IDs configured.")
     else:
-        ids_str = ", ".join(str(id) for id in admin_ids)
-        await message.answer(f"Admin IDs: {ids_str}")
+        lines = []
+        for uid in admin_ids:
+            username = ''
+            try:
+                chat = await message.bot.get_chat(uid)
+                username = f"(@{chat.username})" if chat.username else "(no username)"
+                #lines.append(f"- {uid} {username}")
+            except Exception:
+                username = "(not available)"
+            lines.append(f"- {uid} {username}")
+        response = "Admin IDs:\n" + "\n".join(lines)
+        await message.answer(response)
