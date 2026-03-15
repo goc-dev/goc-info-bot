@@ -1,26 +1,26 @@
 FROM python:3.11-slim
 
-# Устанавливаем рабочую директорию
+# Setup a workdir
 WORKDIR /app
 
-# Копируем файлы проекта
+# Copy files to the workdir
 COPY . /app
 
-# Устанавливаем системные зависимости
+# Setup the system dependencies
 RUN apt-get update && \
     apt-get install -y git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Устанавливаем зависимости Python
+# Install the dependencies for Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Определяем переменные окружения (можно переопределить при запуске)
+# Define the environment variables
 ENV BOT_TOKEN=""
 ENV ADMIN_IDS=""
 
-# Указываем команду для запуска бота
-CMD ["python", "bot.py"]
+# Specify command for starting the bot
+CMD ["python", "bots/telegram/bot.py"]
 
-# Порт для доступа к боту (если требуется)
-EXPOSE 80
+# Bot's accessible port
+# EXPOSE 80
